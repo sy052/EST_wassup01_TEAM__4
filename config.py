@@ -11,10 +11,12 @@ config = {
     'annotations_dir': '/home/KDT-admin/data/labels',
     'img_dir' : '/home/KDT-admin/data/images/cropped',
     'output_log': datetime.now().strftime("%d%H%M%S"),
-    'load_pth_24':'../../results/ann/best24.pth',
+    'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive', 
+    'pth_dir':'/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
+    'png_dir' : '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive'
   },
   
-  'training_mode': 'train', # choose between train and test
+  'training_mode': 'val', # choose between val and test
   'class_names' : {
     0: "anger",
     1: "anxiety",
@@ -37,7 +39,8 @@ config = {
   },
   
   'train_params': {
-    'dataset_params':{
+    'earlystopping':{
+      'patience': 7,
     },
     'data_loader_params': {
       'batch_size': 4,
@@ -78,6 +81,6 @@ config = {
       'cycle_momentum':False
     },
     'device': "cuda" if torch.cuda.is_available() else "cpu",
-    'epochs': 100,
+    'epochs': 2,
   },
 }

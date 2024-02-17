@@ -11,20 +11,23 @@ import time
 import os
 from PIL import Image
 from tempfile import TemporaryDirectory
+from collections import defaultdict
 
 cudnn.benchmark = True
 plt.ion()   # plt interactive mode
 
-def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs):
+def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs, early_stopper):
     since = time.time()
+    history = defaultdict(list)
 
+    
     # Create a temporary directory to save training checkpoints
     with TemporaryDirectory() as tempdir:
         best_model_params_path = os.path.join(tempdir, 'best_model_params.pt')
 
         torch.save(model.state_dict(), best_model_params_path)
         best_acc = 0.0
-
+        
         for epoch in range(num_epochs):
             print(f'Epoch {epoch}/{num_epochs - 1}')
             print('-' * 10)
@@ -69,6 +72,18 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                 epoch_loss = running_loss / dataset_sizes[phase]
                 epoch_acc = running_corrects.float() / dataset_sizes[phase]
 
+                if phase == 'train':
+                    history['trn_loss'].append(epoch_loss)
+                    history['trn_acc'].append(epoch_acc)
+
+                if phase == 'val':
+                    history['tst_loss'].append(epoch_loss)
+                    history['tst_acc'].append(epoch_acc)
+
+                    # if early_stopper.should_stop(model, epoch_loss):
+                    #     print(f"EarlyStopping: [Epoch: {epoch - early_stopper.counter}]")
+                    #     break
+
                 print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
                 # deep copy the model
@@ -83,10 +98,9 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
         # load best model weights
         model.load_state_dict(torch.load(best_model_params_path))
         
-    return model
+    return model, history
 
 def visualize_model_predictions(model, img_path, device, class_names):
-    was_training = model.training # 현재 트레이닝 모드 저장
     model.eval()
 
     img = Image.open(img_path)
@@ -102,11 +116,10 @@ def visualize_model_predictions(model, img_path, device, class_names):
         ax.set_title(f'Predicted: {class_names[preds[0]]}')
         plt.imshow(img.cpu().data[0])
 
-        model.train(mode=was_training) # 다시 이전 트레이닝 모드로 변경
-
 def trainer(cfg):
     from custom_dataset import CustomImageDataset
     from models.expression import Emotion_expression
+    from utils.earlystopping import EarlyStopping
 
     # model_cfg
     model_cfg = cfg.get('model_cfg')
@@ -120,6 +133,7 @@ def trainer(cfg):
     annotations_file = path.get('annotations_dir')
     img_dir = path.get('img_dir')
 
+    training_mode = cfg('training_mode')
     class_names = cfg.get('class_names')
     cls_len = len(class_names)
 
@@ -128,6 +142,11 @@ def trainer(cfg):
     loss_fn = train_params.get('loss_fn')
     optimizer = train_params.get('optim')
     epochs = train_params.get('epochs')
+
+    earlystopping = train_params.get('earlystopping')
+    patience = earlystopping.get('patience')
+
+    early_stopper = EarlyStopping(patience=3)
     
 
     # load pretrained model
@@ -157,13 +176,24 @@ def trainer(cfg):
         param.requires_grad = False
         count += 1
 
-   
     dl_params = train_params.get('data_loader_params')
-    image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform) # data_transforms[x] : option
-                for x in ['train', 'val']}
+
+    if training_mode == 'val':
+        image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform)
+                    for x in ['train', 'val']}
+
+
+    # 그냥 중복되더라도 모드별 폴더 두개로 나누기(콘캣으로 진행하는 것보다 실행속도가 더 빠를 것 같다.) -미완료-
+    elif training_mode == 'test':
+        image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform)
+                    for x in ['train', 'val']}
+
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], **dl_params)
                 for x in ['train', 'val']}
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
+    
+    
+
 
     
     
@@ -174,14 +204,38 @@ def trainer(cfg):
 
     # Decay LR by a factor of 0.1 every 7 epochs
     scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
-    best_model = train_model(my_model, dataloaders, dataset_sizes, device, loss_fn, optimizer, scheduler, epochs)
+    best_model, history = train_model(my_model, dataloaders, dataset_sizes, device, loss_fn, optimizer, scheduler, epochs, early_stopper)
 
-    # log
-
+    ###########
+    ### log ###
+    ###########
+    
     log = path.get('output_log')
-    torch.save(best_model.state_dict(), f'./{log}_model.pth')
+    archive = path.get('archive')
 
+    torch.save(best_model.state_dict(), os.path.join(archive, 
+                                                     selected_model,
+                                                     'pth',
+                                                     f'./{log}_model.pth'))
 
+    # loss
+    y1 = history['trn_loss']
+    y2 = history['tst_loss']
+
+    tst_min = min(history['tst_loss'])
+    min_idx = history['tst_loss'].index(tst_min)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(y1, color='#16344E', label='trn_loss')
+    plt.plot(y2, color='#71706C', label='tst_loss')
+    plt.legend()
+    plt.title(f"{selected_model} Losses, Min_loss(test):{tst_min:.4f}, Min_idx(test):{min_idx}")
+    plt.savefig(os.path.join((archive, 
+                            selected_model,
+                            'png',
+                            f'./{log}_losses.png')))
+    
+    # accuracy
     
 
 

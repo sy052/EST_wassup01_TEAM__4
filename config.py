@@ -3,36 +3,38 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingWarmRestarts, CyclicLR
 from datetime import datetime
+from torchvision import models
 
 config = {
 
-  'files': {
-    'annotations_file': '/home/KDT-admin/data/labels',
-    'img_dir' : '/home/KDT-admin/data/images'
-
-  },
-  'output': {
+  'path': {
+    'annotations_dir': '/home/KDT-admin/data/labels',
+    'img_dir' : '/home/KDT-admin/data/images/cropped',
     'output_log': datetime.now().strftime("%d%H%M%S"),
     'load_pth_24':'../../results/ann/best24.pth',
-    'load_pth_168':'../../results/ann/best168.pth',
-    'load_pth_168d':'../../results/ann/best24d.pth',
   },
-  'preprocess_params': {
-  },
+  
+  'training_mode': 'train', # choose between train and test
   'class_names' : {
-    0: "T-Shirt",
-    1: "Trouser",
-    2: "Pullover",
-    3: "Dress",
-    4: "Coat",
-    5: "Sandal",
-    6: "Shirt",
-    7: "Sneaker",
-    8: "Bag",
-    9: "Ankle Boot",
+    0: "anger",
+    1: "anxiety",
+    2: "embrrass",
+    3: "happy",
+    4: "normal",
+    5: "pain",
+    6: "sad",
+    # 7: "pain2",
   },
   'freeze_percentage': 80,
-  'model': MANN,
+  'model_cfg': {
+    'choice_one' : 0,
+    'model_list': [
+        ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1],
+        'convnext_tiny',
+        'convnext_small',
+        'densenet121',
+    ]
+  },
   
   'train_params': {
     'dataset_params':{
@@ -42,10 +44,10 @@ config = {
       'shuffle': True,
       'num_workers': 4
     },
-    'loss_fn': nn.functional.mse_loss,
+    'loss_fn': nn.functional.cross_entropy,
     'optim': torch.optim.AdamW,
     'optim_params': {
-      'lr': 0.001,
+      'lr': 0.00001,
       'weight_decay': 0
     },
 
@@ -76,6 +78,6 @@ config = {
       'cycle_momentum':False
     },
     'device': "cuda" if torch.cuda.is_available() else "cpu",
-    'epochs': 200,
+    'epochs': 100,
   },
 }

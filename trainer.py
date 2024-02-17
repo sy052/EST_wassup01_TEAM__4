@@ -67,7 +67,7 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                     scheduler.step()
 
                 epoch_loss = running_loss / dataset_sizes[phase]
-                epoch_acc = running_corrects.double() / dataset_sizes[phase]
+                epoch_acc = running_corrects.float() / dataset_sizes[phase]
 
                 print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
@@ -82,14 +82,14 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
 
         # load best model weights
         model.load_state_dict(torch.load(best_model_params_path))
+        
     return model
 
-def visualize_model_predictions(model,img_path, device, class_names, data_transforms=None):
-    was_training = model.training # 트레이닝 된 것을 불러오자. 코드 수정 필요
+def visualize_model_predictions(model, img_path, device, class_names):
+    was_training = model.training # 현재 트레이닝 모드 저장
     model.eval()
 
     img = Image.open(img_path)
-    img = data_transforms['val'](img)
     img = img.unsqueeze(0)
     img = img.to(device)
 
@@ -102,56 +102,26 @@ def visualize_model_predictions(model,img_path, device, class_names, data_transf
         ax.set_title(f'Predicted: {class_names[preds[0]]}')
         plt.imshow(img.cpu().data[0])
 
-        model.train(mode=was_training)
+        model.train(mode=was_training) # 다시 이전 트레이닝 모드로 변경
 
 def trainer(cfg):
     from custom_dataset import CustomImageDataset
+    from models.expression import Emotion_expression
 
-    # load pretrained model
-    model_conv = torchvision.models.resnet18(weights='IMAGENET1K_V1')
+    # model_cfg
+    model_cfg = cfg.get('model_cfg')
+    model_list = model_cfg.get('model_list')
+    choice_one = model_cfg.get('choice_one')
+    selected = model_list[choice_one]
+    selected_model = selected[0]
+    model_weights =selected[1]
+    
+    path = cfg.get('path')
+    annotations_file = path.get('annotations_dir')
+    img_dir = path.get('img_dir')
 
-    # low-level freeze
-    freeze_percentage = cfg.get('freeze_percentage')
-    freeze_line = len(model_conv.parameters()) // freeze_percentage
-    count = 0
-    for param in model_conv.parameters():
-        if count > freeze_line:
-            break
-        param.requires_grad = False
-        count += 1
-
-    # Parameters of newly constructed modules have requires_grad=True by default
-    num_ftrs = model_conv.fc.in_features
-    model_conv.fc = nn.Linear(num_ftrs, 7) # input classes num
-    model_conv = model_conv.fc.to(device) # 다른 변수명 필요
-
-    data_transforms = {
-    'train': transforms.Compose([
-        transforms.RandomResizedCrop(224),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-    'val': transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-    }
-
-    files = cfg.get('files')
-    annotations_file = files.get('annotations_file')
-    img_dir = files.get('img_dir')
-
-    class_names = class_names.get('class_names')
-
-    dl_params = train_params.get('data_loader_params')
-    image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x), os.path.join(img_dir, x)) # data_transforms[x] : option
-                for x in ['train', 'val']}
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], **dl_params)
-                for x in ['train', 'val']}
-    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
+    class_names = cfg.get('class_names')
+    cls_len = len(class_names)
 
     train_params = cfg.get('train_params')
     device = train_params.get('device')
@@ -159,21 +129,67 @@ def trainer(cfg):
     optimizer = train_params.get('optim')
     epochs = train_params.get('epochs')
     
+
+    # load pretrained model
+
+    classifi = Emotion_expression(selected_model, cls_len)
+    model_conv = classifi.model
+
+    # preprocess
+    transform = model_weights.transforms() # need before fitted model
+
+
+    # Parameters of newly constructed modules have requires_grad=True by default
+    #num_ftrs = model_conv.fc.in_features
+    #model_conv.fc = nn.Linear(num_ftrs, 7) # input classes num
+    #my_model = model_conv.fc.to(device) # 다른 변수명 필요
+
+    
+    my_model = model_conv.to(device)
+
+    # low-level freeze
+    freeze_percentage = cfg.get('freeze_percentage')
+    freeze_line = len(list(my_model.parameters())) // freeze_percentage
+    count = 0
+    for param in my_model.parameters():
+        if count > freeze_line:
+            break
+        param.requires_grad = False
+        count += 1
+
+   
+    dl_params = train_params.get('data_loader_params')
+    image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform) # data_transforms[x] : option
+                for x in ['train', 'val']}
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], **dl_params)
+                for x in ['train', 'val']}
+    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
+
+    
+    
     # Observe that only parameters of final layer are being optimized as
     # opposed to before.
     optim_params = train_params.get('optim_params')
-    optimizer = optimizer(model_conv.fc.parameters(), **optim_params)
+    optimizer = optimizer(my_model.parameters(), **optim_params)
 
     # Decay LR by a factor of 0.1 every 7 epochs
     scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
-    traind_model = train_model(model_conv, dataloaders, dataset_sizes, device, loss_fn, optimizer, scheduler, epochs)
+    best_model = train_model(my_model, dataloaders, dataset_sizes, device, loss_fn, optimizer, scheduler, epochs)
+
+    # log
+
+    log = path.get('output_log')
+    torch.save(best_model.state_dict(), f'./{log}_model.pth')
 
 
-    # visualize
-    visualize_model_predictions(model_conv)
+    
 
-    plt.ioff()
-    plt.show()
+
+    # # visualize
+    # visualize_model_predictions(model_conv)
+
+    # plt.ioff()
+    # plt.show()
 
     # # traind_visualize
     # visualize_model_predictions(

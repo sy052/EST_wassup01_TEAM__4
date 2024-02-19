@@ -57,8 +57,8 @@ class Emotion_expression:
             model.fc = nn.Linear(num_ftrs, self.cls_len)
         
         elif self.model_name == 'vgg11_bn' or self.model_name == 'vgg13_bn' or self.model_name == 'vgg16_bn':
-            num_ftrs = model.classifier[7].in_features
-            model.classifier[7] = nn.Linear(num_ftrs, self.cls_len)
+            num_ftrs = model.classifier[6].in_features
+            model.classifier[6] = nn.Linear(num_ftrs, self.cls_len)
         
         elif self.model_name == 'vit_b_16':
             num_ftrs = model.heads[0].in_features

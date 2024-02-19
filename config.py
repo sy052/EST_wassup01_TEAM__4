@@ -13,7 +13,7 @@ config = {
     'output_log': datetime.now().strftime("%d%H%M%S"),
     'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
     'pth_dir':'/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
-    'png_dir' : '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive'
+    'png_dir' : '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
   },
   
   'training_mode': 'val', # choose between val and test
@@ -30,7 +30,7 @@ config = {
   
   'freeze_percentage': 60, # 10 단위로 변경
   'model_cfg': {
-    'choice_one' : 15,
+    'choice_one' : 12,
     'model_list': [
         ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0 
         ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
@@ -53,13 +53,13 @@ config = {
   },
   'test_params': {
     'tst_data_loader_params': {
-      'batch_size': 4, # 20 장 배치 3 -> 6개 배치 + 2개 사진 -> 7배치
+      'batch_size': "Auto", # 20 장 배치 3 -> 6개 배치 + 2개 사진 -> 7배치
       'shuffle': False,
       'num_workers': 4
     }
   },
   'train_params': {
-    'device': "cuda" if torch.cuda.is_available() else "cpu",
+    'device': torch.device(f'cuda:0' if torch.cuda.is_available() else 'cpu'),
     'epochs': 1,
     
     'earlystopping':{

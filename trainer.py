@@ -119,6 +119,7 @@ def trainer(cfg):
     train_params = cfg.get('train_params')
     test_params = cfg.get('test_params')
     device = train_params.get('device')
+    torch.cuda.set_device(device) # change allocation of current GPU
     loss_fn = train_params.get('loss_fn')
     optimizer = train_params.get('optim')
 

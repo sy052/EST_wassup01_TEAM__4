@@ -11,7 +11,7 @@ config = {
     'annotations_dir': '/home/KDT-admin/data/labels',
     'img_dir' : '/home/KDT-admin/data/images/cropped',
     'output_log': datetime.now().strftime("%d%H%M%S"),
-    'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive', 
+    'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
     'pth_dir':'/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
     'png_dir' : '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive'
   },
@@ -27,26 +27,51 @@ config = {
     6: "sad",
     # 7: "pain2",
   },
-  'freeze_percentage': 80,
+  
+  'freeze_percentage': 60, # 10 단위로 변경
   'model_cfg': {
-    'choice_one' : 0,
+    'choice_one' : 15,
     'model_list': [
-        ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1],
-        'convnext_tiny',
-        'convnext_small',
-        'densenet121',
+        ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0
+        ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
+        ['densenet121', models.DenseNet121_Weights.IMAGENET1K_V1], # 2
+        ['efficientnet_v2_s', models.EfficientNet_V2_S_Weights.IMAGENET1K_V1], # 3
+        ['googlenet', models.GoogLeNet_Weights.IMAGENET1K_V1],# 4
+        ['inception_v3', models.Inception_V3_Weights.IMAGENET1K_V1], # 5
+        ['mnasnet0_5', models.MNASNet0_5_Weights.IMAGENET1K_V1], # 6
+        ['mobilenet_v3_small', models.MobileNet_V3_Small_Weights.IMAGENET1K_V1], # 7
+        ['resnet18', models.ResNet18_Weights.IMAGENET1K_V1], # 8
+        ['resnet34', models.ResNet34_Weights.IMAGENET1K_V1], # 9
+        ['resnet50', models.ResNet50_Weights.IMAGENET1K_V1], # 10
+        ['resnext50_32x4d', models.ResNeXt50_32X4D_Weights.IMAGENET1K_V1], # 11
+        ['vgg11_bn', models.VGG11_BN_Weights.IMAGENET1K_V1], # 12
+        ['vgg13_bn', models.VGG13_BN_Weights.IMAGENET1K_V1], # 13
+        ['vgg16_bn', models.VGG16_BN_Weights.IMAGENET1K_V1], # 14
+        ['vit_b_16', models.ViT_B_16_Weights.IMAGENET1K_V1], # 15
+        ['swin_t', models.Swin_T_Weights.IMAGENET1K_V1], # 16
     ]
   },
-  
+  'test_params': {
+    'tst_data_loader_params': {
+      'batch_size': 4, # 20 장 배치 3 -> 6개 배치 + 2개 사진 -> 7배치
+      'shuffle': False,
+      'num_workers': 4
+    }
+  },
   'train_params': {
+    'device': "cuda" if torch.cuda.is_available() else "cpu",
+    'epochs': 1,
+    
     'earlystopping':{
       'patience': 7,
     },
-    'data_loader_params': {
+
+    'trn_data_loader_params': {
       'batch_size': 4,
       'shuffle': True,
       'num_workers': 4
     },
+    
     'loss_fn': nn.functional.cross_entropy,
     'optim': torch.optim.AdamW,
     'optim_params': {
@@ -80,7 +105,6 @@ config = {
       'gamma':0.55,
       'cycle_momentum':False
     },
-    'device': "cuda" if torch.cuda.is_available() else "cpu",
-    'epochs': 2,
+    
   },
 }

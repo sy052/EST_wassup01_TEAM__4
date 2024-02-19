@@ -5,7 +5,6 @@ from torch.optim import lr_scheduler
 import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
-from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 import time
 import os
@@ -16,89 +15,65 @@ from collections import defaultdict
 cudnn.benchmark = True
 plt.ion()   # plt interactive mode
 
-def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs, early_stopper):
-    since = time.time()
-    history = defaultdict(list)
+def train_one_epoch(model, dataloaders,device, criterion, optimizer):
+    model.train()  # Set model to training mode  # Set model to evaluate mode
 
+    dataset_sizes = len(dataloaders.dataset)
+    running_loss = 0.0
+    running_corrects = 0
+
+    # Iterate over data.
+    for inputs, labels in dataloaders:
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward
+        outputs = model(inputs)
+        _, preds = torch.max(outputs, 1)
+        loss = criterion(outputs, labels)
+
+        # backward + optimize
+        loss.backward()
+        optimizer.step()
+
+        # statistics
+        running_loss += loss.item() * inputs.size(0)
+        running_corrects += torch.sum(preds == labels.data)
     
-    # Create a temporary directory to save training checkpoints
-    with TemporaryDirectory() as tempdir:
-        best_model_params_path = os.path.join(tempdir, 'best_model_params.pt')
+    epoch_loss = running_loss / dataset_sizes
+    epoch_acc = running_corrects.item() / dataset_sizes
 
-        torch.save(model.state_dict(), best_model_params_path)
-        best_acc = 0.0
-        
-        for epoch in range(num_epochs):
-            print(f'Epoch {epoch}/{num_epochs - 1}')
-            print('-' * 10)
+    return epoch_loss, epoch_acc
 
-            # Each epoch has a training and validation phase
-            for phase in ['train', 'val']:
-                if phase == 'train':
-                    model.train()  # Set model to training mode
-                else:
-                    model.eval()   # Set model to evaluate mode
+def evaluate(model, dataloaders, device, criterion):
+    model.eval()   # Set model to evaluate mode
 
-                running_loss = 0.0
-                running_corrects = 0
+    dataset_sizes = len(dataloaders.dataset)
+    running_loss = 0.0
+    running_corrects = 0
+    with torch.inference_mode():
+    # Iterate over data.
+        for inputs, labels in dataloaders:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
 
-                # Iterate over data.
-                for inputs, labels in dataloaders[phase]:
-                    inputs = inputs.to(device)
-                    labels = labels.to(device)
+            # forward
+            # track history if only in train
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            loss = criterion(outputs, labels)
 
-                    # zero the parameter gradients
-                    optimizer.zero_grad()
+            # statistics
+            running_loss += loss.item() * inputs.size(0)
+            running_corrects += torch.sum(preds == labels.data)
 
-                    # forward
-                    # track history if only in train
-                    with torch.set_grad_enabled(phase == 'train'):
-                        outputs = model(inputs)
-                        _, preds = torch.max(outputs, 1)
-                        loss = criterion(outputs, labels)
+    epoch_loss = running_loss / dataset_sizes
+    epoch_acc = running_corrects.item() / dataset_sizes
 
-                        # backward + optimize only if in training phase
-                        if phase == 'train':
-                            loss.backward()
-                            optimizer.step()
-
-                    # statistics
-                    running_loss += loss.item() * inputs.size(0)
-                    running_corrects += torch.sum(preds == labels.data)
-                
-                if phase == 'train':
-                    scheduler.step()
-
-                epoch_loss = running_loss / dataset_sizes[phase]
-                epoch_acc = running_corrects.float() / dataset_sizes[phase]
-
-                if phase == 'train':
-                    history['trn_loss'].append(epoch_loss)
-                    history['trn_acc'].append(epoch_acc)
-
-                if phase == 'val':
-                    history['tst_loss'].append(epoch_loss)
-                    history['tst_acc'].append(epoch_acc)
-
-                    # if early_stopper.should_stop(model, epoch_loss):
-                    #     print(f"EarlyStopping: [Epoch: {epoch - early_stopper.counter}]")
-                    #     break
-
-                print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
-
-                # deep copy the model
-                if phase == 'val' and epoch_acc > best_acc:
-                    best_acc = epoch_acc
-                    torch.save(model.state_dict(), best_model_params_path)
-
-        time_elapsed = time.time() - since
-        print(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s')
-        print(f'Best val Acc: {best_acc:4f}')
-
-        # load best model weights
-        model.load_state_dict(torch.load(best_model_params_path))
-        
-    return model, history
+    return epoch_loss, epoch_acc
 
 def visualize_model_predictions(model, img_path, device, class_names):
     model.eval()
@@ -117,6 +92,8 @@ def visualize_model_predictions(model, img_path, device, class_names):
         plt.imshow(img.cpu().data[0])
 
 def trainer(cfg):
+    from tqdm.auto import trange
+
     from custom_dataset import CustomImageDataset
     from models.expression import Emotion_expression
     from utils.earlystopping import EarlyStopping
@@ -132,21 +109,29 @@ def trainer(cfg):
     path = cfg.get('path')
     annotations_file = path.get('annotations_dir')
     img_dir = path.get('img_dir')
+    log = path.get('output_log')
+    archive = path.get('archive')
 
-    training_mode = cfg('training_mode')
+    training_mode = cfg.get('training_mode')
     class_names = cfg.get('class_names')
     cls_len = len(class_names)
 
     train_params = cfg.get('train_params')
+    test_params = cfg.get('test_params')
     device = train_params.get('device')
     loss_fn = train_params.get('loss_fn')
     optimizer = train_params.get('optim')
-    epochs = train_params.get('epochs')
 
     earlystopping = train_params.get('earlystopping')
     patience = earlystopping.get('patience')
+    stop_path = os.path.join(archive, 
+                            selected_model,
+                            'pth', 'st',
+                            f'./{log}_stopped.pth')
 
-    early_stopper = EarlyStopping(patience=3)
+    early_stopper = EarlyStopping(patience, stop_path)
+
+    
     
 
     # load pretrained model
@@ -176,27 +161,27 @@ def trainer(cfg):
         param.requires_grad = False
         count += 1
 
-    dl_params = train_params.get('data_loader_params')
-
+    trn_dl_params = train_params.get('trn_data_loader_params')
+    tst_dl_params = test_params.get('tst_data_loader_params')
+    
+    
+    
     if training_mode == 'val':
-        image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform)
-                    for x in ['train', 'val']}
+        ds_trn = CustomImageDataset(os.path.join(annotations_file,'train_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), transform = transform)
+        ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), transform = transform)
 
 
-    # 그냥 중복되더라도 모드별 폴더 두개로 나누기(콘캣으로 진행하는 것보다 실행속도가 더 빠를 것 같다.) -미완료-
     elif training_mode == 'test':
-        image_datasets = {x: CustomImageDataset(os.path.join(annotations_file, x + '_df.csv'), os.path.join(img_dir, x), transform = transform)
-                    for x in ['train', 'val']}
+        ds_trn = CustomImageDataset(os.path.join(annotations_file,'train_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), transform = transform)
+        ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), transform = transform)
 
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], **dl_params)
-                for x in ['train', 'val']}
-    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-    
-    
+    # tst batch_size
+    tst_dataset_sizes = len(ds_tst)
+    tst_dl_params['batch_size'] = tst_dataset_sizes
 
+    dl_trn = torch.utils.data.DataLoader(ds_trn, **trn_dl_params)
+    dl_tst = torch.utils.data.DataLoader(ds_tst, **tst_dl_params)
 
-    
-    
     # Observe that only parameters of final layer are being optimized as
     # opposed to before.
     optim_params = train_params.get('optim_params')
@@ -204,19 +189,56 @@ def trainer(cfg):
 
     # Decay LR by a factor of 0.1 every 7 epochs
     scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
-    best_model, history = train_model(my_model, dataloaders, dataset_sizes, device, loss_fn, optimizer, scheduler, epochs, early_stopper)
+    
+    pbar = trange(train_params.get('epochs'))
+    history = defaultdict(list)
+
+    with TemporaryDirectory() as tempdir:
+        best_model_params_path = os.path.join(tempdir, 'best_model_params.pt')
+
+        torch.save(my_model.state_dict(), best_model_params_path)
+        best_acc = 0.0
+
+        for i in pbar:
+            trn_loss, trn_acc = train_one_epoch(my_model, dl_trn,device, loss_fn, optimizer)
+            tst_loss, tst_acc = evaluate(my_model, dl_tst, device, loss_fn)
+            scheduler.step()
+
+            history['trn_loss'].append(trn_loss)
+            history['trn_acc'].append(trn_acc)
+            history['tst_loss'].append(tst_loss)
+            history['tst_acc'].append(tst_acc)
+
+            if tst_acc > best_acc:
+                best_acc = tst_acc
+                torch.save(my_model.state_dict(), best_model_params_path)
+            
+            # early_stopping
+            if early_stopper.should_stop(my_model, trn_loss):
+                print(f"EarlyStopping: [Epoch: {i+1 - early_stopper.counter}]")
+                break
+            
+            pbar.set_postfix(trn_loss=trn_loss, tst_loss=tst_loss, Tst_acc= tst_acc)
+        
+        # load best model weights
+        my_model.load_state_dict(torch.load(best_model_params_path))
+        # best model save
+        torch.save(my_model.state_dict(), os.path.join(archive, 
+                                                     selected_model,
+                                                     'pth', 'bt',
+                                                     f'./{log}_model.pth'))
+    
+
+
+
 
     ###########
     ### log ###
     ###########
     
-    log = path.get('output_log')
-    archive = path.get('archive')
+    
 
-    torch.save(best_model.state_dict(), os.path.join(archive, 
-                                                     selected_model,
-                                                     'pth',
-                                                     f'./{log}_model.pth'))
+   
 
     # loss
     y1 = history['trn_loss']
@@ -230,10 +252,10 @@ def trainer(cfg):
     plt.plot(y2, color='#71706C', label='tst_loss')
     plt.legend()
     plt.title(f"{selected_model} Losses, Min_loss(test):{tst_min:.4f}, Min_idx(test):{min_idx}")
-    plt.savefig(os.path.join((archive, 
+    plt.savefig(os.path.join(archive, 
                             selected_model,
                             'png',
-                            f'./{log}_losses.png')))
+                            f'./{log}_losses.png'))
     
     # accuracy
     

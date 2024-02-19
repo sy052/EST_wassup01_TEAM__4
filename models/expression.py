@@ -15,5 +15,59 @@ class Emotion_expression:
         if self.model_name == 'alexnet':
             num_ftrs = model.classifier[6].in_features
             model.classifier[6] = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'convnext_tiny':
+            num_ftrs = model.classifier[2].in_features
+            model.classifier[2] = nn.Linear(num_ftrs, self.cls_len)
 
+        elif self.model_name == 'densenet121':
+            num_ftrs = model.classifier.in_features
+            model.classifier = nn.Linear(num_ftrs, self.cls_len)
+
+        elif self.model_name == 'efficientnet_v2_s':
+            num_ftrs = model.classifier[1].in_features
+            model.classifier[1] = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'googlenet':
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, self.cls_len)
+
+        elif self.model_name == 'inception_v3':
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'mnasnet0_5':
+            num_ftrs = model.classifier[2].in_features
+            model.classifier[2] = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'mobilenet_v3_small':
+            num_ftrs = model.classifier[4].in_features
+            model.classifier[4] = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'mobilenetv3':
+            num_ftrs = model.classifier[4].in_features
+            model.classifier[4] = nn.Linear(num_ftrs, self.cls_len)
+
+        elif self.model_name == 'resnet18' or self.model_name == 'resnet34' or self.model_name == 'resnet50':
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'resnext50_32x4d':
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'vgg11_bn' or self.model_name == 'vgg13_bn' or self.model_name == 'vgg16_bn':
+            num_ftrs = model.classifier[7].in_features
+            model.classifier[7] = nn.Linear(num_ftrs, self.cls_len)
+        
+        elif self.model_name == 'vit_b_16':
+            num_ftrs = model.heads[0].in_features
+            model.heads[0] = nn.Linear(num_ftrs, self.cls_len)
+
+        elif self.model_name == 'swin_t':
+            num_ftrs = model.head.in_features
+            model.head = nn.Linear(num_ftrs, self.cls_len)
+
+        
+        
         return model

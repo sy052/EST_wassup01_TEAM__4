@@ -3,6 +3,7 @@
 *.png
 *.csv
 *.pt
+*.pth
 
 /runs
 

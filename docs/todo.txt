@@ -15,7 +15,7 @@
 
 
 # test
-1. pth load해서 샘플로 몇개 이미지 저장까지
+1. pth load해서 샘플로 몇 개 이미지 저장까지
 2. mediapipe 써서 크롭한 이미지 넘긴거 테스트로 돌리게 만들기
 
 # TODAY

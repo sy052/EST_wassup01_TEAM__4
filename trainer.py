@@ -251,7 +251,7 @@ def trainer(cfg):
     plt.plot(y1, color='#16344E', label='trn_loss')
     plt.plot(y2, color='#71706C', label='tst_loss')
     plt.legend()
-    plt.title(f"{selected_model} Losses, Min_loss(test):{tst_min:.4f}, Min_idx(test):{min_idx}")
+    plt.title(f"{selected_model} Losses, Min_loss(test):{tst_min:.4f}, Min_idx(test):{min_idx+1}")
     plt.savefig(os.path.join(archive, 
                             selected_model,
                             'png',

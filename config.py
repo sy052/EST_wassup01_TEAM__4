@@ -32,7 +32,7 @@ config = {
   'model_cfg': {
     'choice_one' : 15,
     'model_list': [
-        ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0
+        ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0 
         ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
         ['densenet121', models.DenseNet121_Weights.IMAGENET1K_V1], # 2
         ['efficientnet_v2_s', models.EfficientNet_V2_S_Weights.IMAGENET1K_V1], # 3

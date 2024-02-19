@@ -5,6 +5,16 @@
 
 
 # TODAY
-1. 1000장 이미지 분류
+1. 1000장 이미지 분류 -> 얼굴이 너무 작게 나온경우, 라벨과 표정 다른 거
 2. 모델 나눠갖기
-3. 
+
+
+모델
+세준님 : custom,inception_v3, vgg11
+소연님 : resnet, alexnet, vit_b_16
+재석님 : efficientnet_v2_s, densenet121, yolo v8
+이봉훈 : mobilenet_v3_small
+
+
+후보군 
+googlenet, swin_t

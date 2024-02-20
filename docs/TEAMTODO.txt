@@ -5,15 +5,31 @@
 
 
 # TODAY
-1. 1000장 이미지 분류 -> 얼굴이 너무 작게 나온경우, 라벨과 표정 다른 거
+
+-세준님-
+1. 라벨별로 폴더 만들기
+2. 2000장 이미지 분류 각각 폴더로 넣기(랜덤)
+
+-재석, 소연님-
+3. 라벨과 표정 다른 거 검출
+4. 검출된 라벨 다시 채워넣기
+
+-세준님-
+5. 크롭
+6. 이미지 사이즈로 검출 -> 파일명을 저장 -> pandas_df -> 라벨
+
+-재석, 소연님-
+7. 검출된 파일 개수만큼 다시 채워넣기
+
+8. val_mode / tst_mode 나눠서 데이터 넣기
+val_mode : train, val
+
 2. 모델 나눠갖기
 
-
 모델
-세준님 : custom,inception_v3, vgg11
+세준님 : custom, mobilenet_v3_small, vgg11
 소연님 : resnet, alexnet, vit_b_16
 재석님 : efficientnet_v2_s, densenet121, yolo v8
-이봉훈 : mobilenet_v3_small
 
 
 후보군 

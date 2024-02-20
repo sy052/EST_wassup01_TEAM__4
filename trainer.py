@@ -12,6 +12,8 @@ from PIL import Image
 from tempfile import TemporaryDirectory
 from collections import defaultdict
 
+
+
 cudnn.benchmark = True
 plt.ion()   # plt interactive mode
 
@@ -75,21 +77,6 @@ def evaluate(model, dataloaders, device, criterion):
 
     return epoch_loss, epoch_acc
 
-def visualize_model_predictions(model, img_path, device, class_names):
-    model.eval()
-
-    img = Image.open(img_path)
-    img = img.unsqueeze(0)
-    img = img.to(device)
-
-    with torch.no_grad():
-        outputs = model(img)
-        _, preds = torch.max(outputs, 1)
-
-        ax = plt.subplot(2,2,1)
-        ax.axis('off')
-        ax.set_title(f'Predicted: {class_names[preds[0]]}')
-        plt.imshow(img.cpu().data[0])
 
 def trainer(cfg):
     from tqdm.auto import trange
@@ -142,14 +129,7 @@ def trainer(cfg):
 
     # preprocess
     transform = model_weights.transforms() # need before fitted model
-
-
-    # Parameters of newly constructed modules have requires_grad=True by default
-    #num_ftrs = model_conv.fc.in_features
-    #model_conv.fc = nn.Linear(num_ftrs, 7) # input classes num
-    #my_model = model_conv.fc.to(device) # 다른 변수명 필요
-
-    
+ 
     my_model = model_conv.to(device)
 
     # low-level freeze
@@ -168,8 +148,8 @@ def trainer(cfg):
     
     
     if training_mode == 'val':
-        ds_trn = CustomImageDataset(os.path.join(annotations_file,'train_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), transform = transform)
-        ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), transform = transform)
+        ds_trn = CustomImageDataset(os.path.join(annotations_file,'v_trn_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), transform = transform)
+        ds_tst = CustomImageDataset(os.path.join(annotations_file,'v_tst_df.csv'), os.path.join(img_dir, training_mode + '_mode', 'test'), transform = transform)
 
 
     elif training_mode == 'test':
@@ -237,10 +217,6 @@ def trainer(cfg):
     ### log ###
     ###########
     
-    
-
-   
-
     # loss
     y1 = history['trn_loss']
     y2 = history['tst_loss']
@@ -259,26 +235,22 @@ def trainer(cfg):
                             f'./{log}_losses.png'))
     
     # accuracy
-    
+    y1 = history['trn_acc']
+    y2 = history['tst_acc']
 
+    tst_max = max(history['tst_acc'])
+    max_idx = history['tst_acc'].index(tst_max)
 
-    # # visualize
-    # visualize_model_predictions(model_conv)
+    plt.figure(figsize=(8, 6))
+    plt.plot(y1, color='#16344E', label='trn_acc')
+    plt.plot(y2, color='#71706C', label='tst_acc')
+    plt.legend()
+    plt.title(f"{selected_model} accuracy, max(test):{tst_max:.4f}, max_idx(test):{max_idx+1}")
+    plt.savefig(os.path.join(archive, 
+                            selected_model,
+                            'png',
+                            f'./{log}_accuracy.png'))
 
-    # plt.ioff()
-    # plt.show()
-
-    # # traind_visualize
-    # visualize_model_predictions(
-    # model_conv,
-    # img_path='data/hymenoptera_data/val/bees/72100438_73de9f17af.jpg',
-    # device=device,
-    # class_names=class_names,
-    # data_transforms = data_transforms
-    # )
-
-    # plt.ioff()
-    # plt.show()
 
 def get_args_parser(add_help=True):
     import argparse

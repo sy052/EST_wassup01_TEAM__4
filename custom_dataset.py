@@ -6,7 +6,7 @@ from torchvision.io import read_image
 class CustomImageDataset(Dataset):
     # annotations_file : labels path, img_dir : images folder path
     def __init__(self, annotations_file:str, img_dir:str, transform=None, target_transform=None):
-        self.img_labels = pd.read_csv(annotations_file, usecols=['name', 'class'])
+        self.img_labels = pd.read_csv(annotations_file, usecols=['file_name', 'class'])
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform

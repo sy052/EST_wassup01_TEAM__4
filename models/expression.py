@@ -41,12 +41,12 @@ class Emotion_expression:
             model.classifier[2] = nn.Linear(num_ftrs, self.cls_len)
         
         elif self.model_name == 'mobilenet_v3_small':
-            num_ftrs = model.classifier[4].in_features
-            model.classifier[4] = nn.Linear(num_ftrs, self.cls_len)
+            num_ftrs = model.classifier[3].in_features
+            model.classifier[3] = nn.Linear(num_ftrs, self.cls_len)
         
         elif self.model_name == 'mobilenetv3':
-            num_ftrs = model.classifier[4].in_features
-            model.classifier[4] = nn.Linear(num_ftrs, self.cls_len)
+            num_ftrs = model.classifier[3].in_features
+            model.classifier[3] = nn.Linear(num_ftrs, self.cls_len)
 
         elif self.model_name == 'resnet18' or self.model_name == 'resnet34' or self.model_name == 'resnet50':
             num_ftrs = model.fc.in_features
@@ -68,6 +68,4 @@ class Emotion_expression:
             num_ftrs = model.head.in_features
             model.head = nn.Linear(num_ftrs, self.cls_len)
 
-        
-        
         return model

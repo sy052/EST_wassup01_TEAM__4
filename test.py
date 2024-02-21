@@ -40,7 +40,7 @@ def test(cfg):
 
     my_model = model_conv.to(device)
 
-    modelfile = '19070628' # find and input model num
+    modelfile = '19140202' # find and input model num
     my_model.load_state_dict(torch.load(
         os.path.join(archive,
                     selected_model,
@@ -50,8 +50,7 @@ def test(cfg):
     training_mode = cfg.get('training_mode')
     tst_dl_params = test_params.get('tst_data_loader_params')
     
-
-    ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), transform = transform)
+    ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), mode= 'test', transform = transform)
 
     tst_dataset_sizes = len(ds_tst)
     tst_dl_params['batch_size'] = tst_dataset_sizes

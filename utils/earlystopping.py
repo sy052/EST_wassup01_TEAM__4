@@ -13,7 +13,7 @@ class EarlyStopping(object):
         if loss < self._min_loss:
             self._min_loss = loss
             self.__counter = 0
-            torch.save(model.state_dict(), self._path)
+            #torch.save(model.state_dict(), self._path)
             
         elif loss > self._min_loss:
             self.__counter += 1

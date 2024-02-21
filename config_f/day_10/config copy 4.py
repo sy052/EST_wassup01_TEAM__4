@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingWarmRestarts, CyclicLR
 from datetime import datetime
-from torchvision import models
 import pytz
+from torchvision import models
 
 config = {
 
@@ -37,7 +37,7 @@ config = {
   
   'freeze_percentage': 60, # 10 단위로 변경
   'model_cfg': {
-    'choice_one' : 17,
+    'choice_one' : 3,
     'model_list': [
         ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0 
         ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
@@ -56,7 +56,6 @@ config = {
         ['vgg16_bn', models.VGG16_BN_Weights.IMAGENET1K_V1], # 14
         ['vit_b_16', models.ViT_B_16_Weights.IMAGENET1K_V1], # 15
         ['swin_t', models.Swin_T_Weights.IMAGENET1K_V1], # 16
-        ['custom', None], # 17
     ]
   },
   'test_params': {
@@ -75,7 +74,7 @@ config = {
     },
 
     'trn_data_loader_params': {
-      'batch_size': 256,
+      'batch_size': 4,
       'shuffle': True,
       'num_workers': 4
     },

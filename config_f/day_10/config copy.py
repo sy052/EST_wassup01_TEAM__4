@@ -4,14 +4,13 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingWarmRestarts, CyclicLR
 from datetime import datetime
 from torchvision import models
-import pytz
 
 config = {
 
   'path': {
     'annotations_dir': '/home/KDT-admin/data_2000/labels',
     'img_dir' : '/home/KDT-admin/data_2000/images/cropped',
-    'output_log': datetime.now(pytz.timezone('Asia/Seoul')).strftime("%d%H%M%S"),
+    'output_log': datetime.now().strftime("%d%H%M%S"),
     'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
     'pkl_path_list_trn': [
       ('/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/0_v_ds_trn.pkl',
@@ -37,7 +36,7 @@ config = {
   
   'freeze_percentage': 60, # 10 단위로 변경
   'model_cfg': {
-    'choice_one' : 17,
+    'choice_one' : 12,
     'model_list': [
         ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0 
         ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
@@ -56,7 +55,6 @@ config = {
         ['vgg16_bn', models.VGG16_BN_Weights.IMAGENET1K_V1], # 14
         ['vit_b_16', models.ViT_B_16_Weights.IMAGENET1K_V1], # 15
         ['swin_t', models.Swin_T_Weights.IMAGENET1K_V1], # 16
-        ['custom', None], # 17
     ]
   },
   'test_params': {
@@ -75,7 +73,7 @@ config = {
     },
 
     'trn_data_loader_params': {
-      'batch_size': 256,
+      'batch_size': 4,
       'shuffle': True,
       'num_workers': 4
     },

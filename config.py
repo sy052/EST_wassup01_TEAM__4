@@ -11,6 +11,8 @@ config = {
   'path': {
     'annotations_dir': '/home/KDT-admin/data_2000/labels',
     'img_dir' : '/home/KDT-admin/data_2000/images/cropped',
+    'test_dir' : '/home/KDT-admin/data/sample_test_data',
+    'test_anno' : '/home/KDT-admin/data/test_set1000/labels',
     'output_log': datetime.now(pytz.timezone('Asia/Seoul')).strftime("%d%H%M%S"),
     'archive': '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive',
     'pkl_path_list_trn': [
@@ -19,11 +21,10 @@ config = {
 
     ],
     'pkl_path_list_tst' : [
-
     ]
   },
   
-  'training_mode': 'val', # choose between val and test
+  'training_mode': 'test', # choose between val and test
   'class_names' : {
     0: "anger",
     1: "anxiety",
@@ -35,9 +36,9 @@ config = {
     # 7: "pain2",
   },
   
-  'freeze_percentage': 60, # 10 단위로 변경
+  'freeze_percentage': 0.6, # 0. ~ 1.
   'model_cfg': {
-    'choice_one' : 17,
+    'choice_one' : 2,
     'model_list': [
         ['alexnet', models.AlexNet_Weights.IMAGENET1K_V1], # 0 
         ['convnext_tiny', models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1], # 1
@@ -46,7 +47,7 @@ config = {
         ['googlenet', models.GoogLeNet_Weights.IMAGENET1K_V1],# 4
         ['inception_v3', models.Inception_V3_Weights.IMAGENET1K_V1], # 5
         ['mnasnet0_5', models.MNASNet0_5_Weights.IMAGENET1K_V1], # 6
-        ['mobilenet_v3_small', models.MobileNet_V3_Small_Weights.IMAGENET1K_V1], # 7
+        ['mobilenet_v3_large', models.MobileNet_V3_Large_Weights.IMAGENET1K_V1], # 7
         ['resnet18', models.ResNet18_Weights.IMAGENET1K_V1], # 8
         ['resnet34', models.ResNet34_Weights.IMAGENET1K_V1], # 9
         ['resnet50', models.ResNet50_Weights.IMAGENET1K_V1], # 10
@@ -59,13 +60,15 @@ config = {
         ['custom', None], # 17
     ]
   },
+
   'test_params': {
     'tst_data_loader_params': {
-      'batch_size': "Auto",
+      'batch_size': 256,
       'shuffle': False,
       'num_workers': 4
     }
   },
+
   'train_params': {
     'device': torch.device(f'cuda:0' if torch.cuda.is_available() else 'cpu'),
     'epochs': 1,

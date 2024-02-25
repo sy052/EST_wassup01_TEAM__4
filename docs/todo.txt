@@ -4,20 +4,31 @@
 
 # trainer
 
-7. custom model 만들기(미완)
-10. 앙상블 모델 만들기(custom)
 11. multi classfication 시각화 자료 어떤 것 쓰는지 조사
 
 
 # test
 1. pth load해서 샘플로 몇 개 이미지 저장까지
-2. mediapipe 써서 크롭한 이미지 넘긴거 테스트로 돌리게 만들기
 
+3. precision_recall_curve 맞는지 확인
+4. 메트릭 정확한지 확인 -> 내일 무조건 수정하자
 1. 메트릭 시각화, 다른 결과들 시각화
+
+# 목표 2
+
+tts 구하기
+
 
 # TODAY
 
 4. 속도 어떻게 쓰는지 알아보기, 메트릭 뭐쓸지 알아보기 
 (속도 대신 파라미터 개수로 나타냄 엑셀 시트 참고3)
 (정확도 말고 다른 메트릭을 어떤 것을 쓸까 ?)
+
+
+우선순위
+
+1. test 메트릭 시각화 , accuracy 해결못함
+2. streamlit 구현
+3. wave2lip 코드 구현
 

@@ -5,6 +5,8 @@ from torchvision.io import read_image
 import torch
 from ultralytics import YOLO
 from PIL import Image
+import cv2
+
 
 class CustomImageDataset(Dataset):
     # annotations_file : labels path, img_dir : images folder path
@@ -24,19 +26,25 @@ class CustomImageDataset(Dataset):
         image = Image.open(img_path)
 
         if self.mode == 'test':
-            image = []
-            img = cv2.imread(os.path.join(data_path, img_name))
-            result = self.face_detection_model.predict(source=img, conf=0.6, half=False)
+            image_ = []
+            #img = cv2.imread(image)
+            result = self.face_detection_model.predict(source=image, conf=0.6, half=False,show_labels=False, show_conf=False)
             result = result[0].cpu().numpy()
 
             for box in result.boxes:
                 xyxy = box.xyxy[0].astype(int).tolist()
                 x1, y1, x2, y2 = xyxy
-                image.append(img[y1:y2, x1:x2])
+                cropped_image = image.crop((x1, y1, x2, y2))
+                image_.append(cropped_image)
             
         label = int(self.img_labels.iloc[idx, 1])
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
             label = self.target_transform(label)
+
         return image, label
+
+
+
+

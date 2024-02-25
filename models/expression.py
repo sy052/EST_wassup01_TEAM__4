@@ -46,7 +46,7 @@ class Emotion_expression:
                 num_ftrs = model.classifier[2].in_features
                 model.classifier[2] = nn.Linear(num_ftrs, self.cls_len)
             
-            elif self.model_name == 'mobilenet_v3_small':
+            elif self.model_name == 'mobilenet_v3_large':
                 num_ftrs = model.classifier[3].in_features
                 model.classifier[3] = nn.Linear(num_ftrs, self.cls_len)
             

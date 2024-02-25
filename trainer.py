@@ -137,7 +137,7 @@ def trainer(cfg):
         
         # low-level freeze
         freeze_percentage = cfg.get('freeze_percentage')
-        freeze_line = len(list(my_model.parameters())) // freeze_percentage
+        freeze_line = int(len(list(my_model.parameters())) * freeze_percentage) # default = 0.6
         count = 0
         for param in my_model.parameters():
             if count > freeze_line:
@@ -150,15 +150,14 @@ def trainer(cfg):
     tst_dl_params = test_params.get('tst_data_loader_params')
     
     
-    
     if training_mode == 'val':
-        ds_trn = CustomImageDataset(os.path.join(annotations_file,'v_trn_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), mode = 'train',transform = transform)
+        ds_trn = CustomImageDataset(os.path.join(annotations_file,'v_trn_df.csv'), os.path.join(img_dir, training_mode + '_mode' ,'train'), mode = 'train',transform = transform)
         ds_tst = CustomImageDataset(os.path.join(annotations_file,'v_tst_df.csv'), os.path.join(img_dir, training_mode + '_mode', 'test'), mode = 'train', transform = transform)
 
 
     elif training_mode == 'test':
-        ds_trn = CustomImageDataset(os.path.join(annotations_file,'train_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), mode = 'train', transform = transform)
-        ds_tst = CustomImageDataset(os.path.join(annotations_file,training_mode + '_df.csv'), os.path.join(img_dir, training_mode + '_mode', training_mode), mode = 'train', transform = transform)
+        ds_trn = CustomImageDataset(os.path.join(annotations_file,'t_trn_df.csv'), os.path.join(img_dir,training_mode + '_mode' ,'train'), mode = 'train', transform = transform)
+        ds_tst = CustomImageDataset(os.path.join(annotations_file,'t_tst_df.csv'), os.path.join(img_dir, training_mode + '_mode', 'test'), mode = 'train', transform = transform)
 
 
     # with open(f"{choice_one}_v_ds_trn.pkl", "wb") as f:
@@ -190,9 +189,10 @@ def trainer(cfg):
     #     with open(tst_path, "rb") as f:
     #         ds_tst = pickle.load(f)
 
-    # tst batch_size
-    tst_dataset_sizes = len(ds_tst)
-    tst_dl_params['batch_size'] = tst_dataset_sizes
+    if training_mode == 'val':
+        # tst batch_size
+        tst_dataset_sizes = len(ds_tst)
+        tst_dl_params['batch_size'] = tst_dataset_sizes
 
     dl_trn = torch.utils.data.DataLoader(ds_trn, **trn_dl_params)
     dl_tst = torch.utils.data.DataLoader(ds_tst, **tst_dl_params)
@@ -271,6 +271,7 @@ def trainer(cfg):
                             'png',
                             f'./{log}_losses.png'))
     
+    plt.close()
     # accuracy
     y1 = history['trn_acc']
     y2 = history['tst_acc']
@@ -305,7 +306,7 @@ if __name__ == "__main__":
     import pytz
 
     set_mode = 'onetime' # onetime, manytime
-    many_mode = 'day_10' # day_10, day_20, day_30, goodnight
+    many_mode = 'goodnight' # day_10, day_20, day_30, goodnight
 
     if set_mode == 'onetime':
         args = get_args_parser().parse_args()
@@ -318,7 +319,7 @@ if __name__ == "__main__":
         df = pd.DataFrame(columns=columns)
         now = datetime.now(pytz.timezone('Asia/Seoul')).strftime("%d%H%M%S")
 
-        target_dir = os.path.join('/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/config_f', many_mode)
+        target_dir = os.path.join('/home/KDT-admin/work/soyeon/EST_wassup01_TEAM__4/config_f', many_mode)
         cfg_list = sorted(os.listdir(target_dir))
 
         for cfg in cfg_list:
@@ -344,17 +345,17 @@ if __name__ == "__main__":
                     'weight_decay': optim_params.get('weight_decay'),
                     'PNG_NAME': log,
                     'early_stop_epoch': early_stop_epoch,
-                    'Tst_acc': round(Tst_acc, 2),
-                    'Max_acc': round(Max_acc, 2),
+                    'Tst_acc': round(Tst_acc, 4),
+                    'Max_acc': round(Max_acc, 4),
                     'Max_idx': Max_idx,
-                    'trn_loss': round(trn_loss, 2),
-                    'tst_loss': round(tst_loss, 2),
-                    'Min_loss': round(Min_loss, 2),
+                    'trn_loss': round(trn_loss, 4),
+                    'tst_loss': round(tst_loss, 4),
+                    'Min_loss': round(Min_loss, 4),
                     'Min_idx': Min_idx
                 }
                 df = pd.concat([df, pd.DataFrame([new_data], columns=columns)], ignore_index=True)
 
-        root_dir = '/home/KDT-admin/work/bonghoon/EST_wassup01_TEAM__4/archive/train_log'
+        root_dir = '/home/KDT-admin/work/soyeon/EST_wassup01_TEAM__4/archive/train_log'
         folder_name = now
         os.makedirs(os.path.join(root_dir, folder_name))
         save_dir = os.path.join(root_dir, folder_name)

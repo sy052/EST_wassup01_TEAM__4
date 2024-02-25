@@ -1,7 +1,6 @@
 # custom
 *.jpg
 *.png
-*.csv
 *.pt
 *.pth
 

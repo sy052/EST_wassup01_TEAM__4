@@ -1,0 +1,7 @@
+training_mode,model_num,optim,image(EA),freeze,epochs,batch,lr,weight_decay,PNG_NAME,early_stop_epoch,Tst_acc,Max_acc,Max_idx,trn_loss,tst_loss,Min_loss,Min_idx
+val,9,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21103925,0,0.62,0.62,0,1.42,1.04,1.04,0
+val,10,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21104029,0,0.51,0.51,0,1.7,1.41,1.41,0
+val,8,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21104155,0,0.58,0.58,0,1.49,1.13,1.13,0
+val,16,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21104240,0,0.59,0.59,0,1.45,1.1,1.1,0
+val,7,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21104443,0,0.41,0.41,0,1.79,1.58,1.58,0
+val,15,<class 'torch.optim.adamw.AdamW'>,2000,60,1,4,1e-05,0,21104555,0,0.64,0.64,0,1.18,1.0,1.0,0

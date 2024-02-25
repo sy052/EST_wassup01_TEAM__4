@@ -137,14 +137,14 @@ with st.sidebar:
     #st.image(image, use_column_width=True)
     #st.sidebar.image(image, use_column_width=True, caption="Uploaded! :)")
 
-  ##### image inference #####
-  fig, ax, emotion= one_pic_inference(image)
+    ##### image inference #####
+    fig, ax, emotion= one_pic_inference(image)
 
-  # Display the image
-  st.pyplot(fig)
+    # Display the image
+    st.pyplot(fig)
 
-  # 결과 출력
-  st.write(f"당신의 지금 감정은 {emotion} 입니다.")
+    # 결과 출력
+    st.write(f"당신의 지금 감정은 {emotion} 입니다.")
 
 # Display messages in history
 for content in st.session_state.messages:

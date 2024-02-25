@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import matplotlib.pyplot as plt
 from PIL import Image
+import matplotlib.patches as patches
 import numpy as np
 import torch
 

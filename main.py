@@ -11,6 +11,7 @@ import textwrap
 import json
 from PIL import Image
 import matplotlib.pyplot as plt
+import base64
 
 from one_pic_infer import one_pic_inference
 
@@ -111,13 +112,6 @@ if "api_key" not in st.session_state:
 
 st.title("💬 심리상담 Chatbot")
 
-if "messages" not in st.session_state:
-  init_messages()
-  st.session_state.messages.append(
-    glm.Content(role='model', parts=[glm.Part(text='무슨 고민이 있으세요?')])
-  )
-  set_generate(False)
-
 # sidebar
 with st.sidebar:
 
@@ -145,52 +139,91 @@ with st.sidebar:
 
     # 결과 출력
     st.write(f"당신의 지금 감정은 {emotion} 입니다.")
+    if emotion == 'person': # happy로 고쳐야한다.
+      st.session_state.messages.append(
+      glm.Content(role='model', parts=[glm.Part(text='오늘은 행복한 날이군요?')])
+      )
+      set_generate(False)
+    elif emotion == 'sad': 
+      st.session_state.messages.append(
+      glm.Content(role='model', parts=[glm.Part(text='무슨일 있어요? 슬퍼보여요')])
+      )
+      set_generate(False)
 
-# Display messages in history
-for content in st.session_state.messages:
-  if text := content.parts[0].text:
-    with st.chat_message('human' if content.role == 'user' else 'ai'):
-      st.write(text)
+col1, col2 = st.columns([1, 1])
 
-# Chat input
-if prompt := st.chat_input("저에게 말 해 보세요."):
-  set_generate(True)
-  # Append to history
-  st.session_state.messages.append(
-    glm.Content(role='user', parts=[glm.Part(text=prompt)])
-  )
-  # Display input message
-  with st.chat_message('human'):
-    st.write(prompt)
+with col1:
+  # video_file
+  video_file = open('./contents/result_video.mp4', 'rb')
+  video_bytes = video_file.read()
+  video_base64 = base64.b64encode(video_bytes).decode('utf-8')
 
-# AI generate
-if st.session_state.generate:
-  set_generate(False)
-  # Generate
-
-  if model_name == 'gemini-pro':
-    passage = find_best_passage(prompt, df)
-    prompted = make_prompt(prompt, passage)
-    response = model.generate_content(prompted, stream=True)
+  md =  f"""
+            <video autoplay="true" muted="False" loop="true" controls=False style="width: 100%">
+                <source src="data:video/mp4;base64,{video_base64}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+          """
+  st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
   
-  elif model_name == 'SBERT':
-    embedded = model.encode(prompt)
-    df['distance'] = df['Embeddings'].map(lambda x: cosine_similarity([embedded], [x]).squeeze())
-    text = df.loc[df['distance'].idxmax()]['consulting']
 
-  
-  # Stream display
-  with st.chat_message("ai"):
-    placeholder = st.empty()
+with col2:
+  with st.container():
+    if "messages" not in st.session_state:
+      init_messages()
+      st.session_state.messages.append(
+        glm.Content(role='model', parts=[glm.Part(text='무슨 고민이 있으세요?')])
+      )
+      set_generate(False)
 
-  if model_name == 'gemini-pro':
-    text = stream_display(response, placeholder)
-    # Append to history
-    st.session_state.messages.append(response.candidates[0].content)
+    # Display messages in history
+    for content in st.session_state.messages:
+      if text := content.parts[0].text:
+        with st.chat_message('human' if content.role == 'user' else 'ai'):
+          st.write(text)
 
-  elif model_name == 'SBERT':
-    st.session_state.messages.append(
-    glm.Content(role='ai', parts=[glm.Part(text=text)])
-  )
+    # Chat input
+    if prompt := st.chat_input("저에게 말 해 보세요."):
+      set_generate(True)
+      # Append to history
+      st.session_state.messages.append(
+        glm.Content(role='user', parts=[glm.Part(text=prompt)])
+      )
+      # Display input message
+      with st.chat_message('human'):
+        st.write(prompt)
 
-  placeholder.write(text)
+  # AI generate
+  if st.session_state.generate:
+    set_generate(False)
+    # Generate
+
+    if model_name == 'gemini-pro':
+      passage = find_best_passage(prompt, df)
+      prompted = make_prompt(prompt, passage)
+      response = model.generate_content(prompted, stream=True)
+    
+    elif model_name == 'SBERT':
+      embedded = model.encode(prompt)
+      df['distance'] = df['Embeddings'].map(lambda x: cosine_similarity([embedded], [x]).squeeze())
+      text = df.loc[df['distance'].idxmax()]['consulting']
+
+    
+    # Stream display
+    with st.chat_message("ai"):
+      placeholder = st.empty()
+
+    if model_name == 'gemini-pro':
+      text = stream_display(response, placeholder)
+      # Append to history
+      st.session_state.messages.append(response.candidates[0].content)
+
+    elif model_name == 'SBERT':
+      st.session_state.messages.append(
+      glm.Content(role='ai', parts=[glm.Part(text=text)])
+    )
+
+    placeholder.write(text)

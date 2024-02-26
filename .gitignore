@@ -4,7 +4,7 @@
 *.csv
 *.pt
 *.pth
-
+/archive/models
 /runs
 
 # Byte-compiled / optimized / DLL files

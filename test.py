@@ -1,7 +1,7 @@
 def test(cfg):
     from custom_dataset import CustomImageDataset
     from models.expression import Emotion_expression
-    from utils.metrics import cm_to_metrics
+    from utils.metrics import cm_to_metrics, cm_mento_metrics
     import os
     import torch
     from sklearn.metrics import confusion_matrix, average_precision_score, precision_recall_curve
@@ -111,7 +111,7 @@ def test(cfg):
     cm = confusion_matrix(cm_true, cm_pred)
     norm_cm = confusion_matrix(cm_true, cm_pred, normalize='true')
     
-    emotion_df = cm_to_metrics(cm, emotion)
+    emotion_df = cm_mento_metrics(cm, emotion)
     
     print(emotion_df)
     

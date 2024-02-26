@@ -4,9 +4,10 @@ from PIL import Image
 import matplotlib.patches as patches
 import numpy as np
 import torch
+import opencv
 
 def one_pic_inference(target_image):
-    model = YOLO('yolov8n.pt')
+    model = YOLO('archive/models/yolo/pth/best.pt')
 
     image_array = np.array(target_image)
 

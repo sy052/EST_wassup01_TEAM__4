@@ -2,7 +2,7 @@
 *.jpg
 *.png
 *.csv
-*.pt
+#*.pt
 *.pth
 
 /runs

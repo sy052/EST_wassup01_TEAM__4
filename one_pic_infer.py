@@ -4,7 +4,7 @@ from PIL import Image
 import matplotlib.patches as patches
 import numpy as np
 import torch
-import opencv
+import cv2
 
 def one_pic_inference(target_image):
     model = YOLO('archive/models/yolo/pth/best.pt')

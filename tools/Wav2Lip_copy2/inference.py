@@ -27,7 +27,7 @@ parser.add_argument('--audio', type=str,
                     help='Filepath of video/audio file to use as raw audio source', 
                     default='contents/input_audio.wav')
 parser.add_argument('--outfile', type=str, help='Video path to save result. See default for an e.g.', 
-                                default='contents/result_video.mp4')
+                                default='../../contents/result_video.mp4')
 
 parser.add_argument('--static', type=bool, 
                     help='If True, then use only first video frame for inference', default=False)

@@ -10,6 +10,8 @@ def test(cfg):
     import seaborn as sns
     import numpy as np
     import torchvision.transforms as transforms
+    import pandas as pd
+    from sklearn.metrics import multilabel_confusion_matrix
     
     # model_cfg
     model_cfg = cfg.get('model_cfg')
@@ -100,9 +102,9 @@ def test(cfg):
             cm_true += labels.data.cpu().tolist()
 
         total_acc = running_corrects.item() / tst_dataset_sizes
-        
+        print(total_acc)
         # AP
-            
+    
 
 
     # confusion matrix
@@ -122,15 +124,19 @@ def test(cfg):
     # auc_pr = average_precision_score(cm_true, cm_pred)
         
    
+    recall_df = pd.DataFrame(index=emotion, columns=["precision", "recall"])
+    # precision_recall_curve
+    for i in range(cls_len):
+        precision, recall, _ = precision_recall_curve(cm_true, cm_pred, pos_label=i)
+        plt.plot(recall, precision, label=class_names[i])
+        plt.legend(loc="lower left")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.savefig('precision_recall_curve.png')
     
-    # # precision_recall_curve
-    # for i in range(cls_len):
-    #     precision, recall, _ = precision_recall_curve(cm_true, cm_pred, pos_label=i)
-    #     plt.plot(recall, precision, label=class_names[i])
-    #     plt.legend(loc="lower left")
-    #     plt.grid(True)
-    #     plt.tight_layout()
-    #     plt.savefig('precision_recall_curve.png')
+    print(recall_df)
 
 
     # cm save

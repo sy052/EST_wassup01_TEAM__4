@@ -1,6 +1,6 @@
 # EST_wassup01_TEAM__4
 
-## Predicting Depression Using Neural Network and ML Models
+## Non-face-to-face psychological counseling service using AI human
 - Purpose of the project
 	- Establishing a business plan using an Facial Expression Recognition classification model
   - Non-face-to-face psychological counseling treatment

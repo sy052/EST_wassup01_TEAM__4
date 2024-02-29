@@ -18,6 +18,7 @@
 - [Bong-HoonLee](https://github.com/Bong-HoonLee)
 - [Jae-SeokLee](https://github.com/appleman153)
 - [Sejun Choi](https://github.com/enversel)
+- [so-yeonHwang](https://github.com/sy052)
 
 
 ### Directory

@@ -1,4 +1,4 @@
-# EST_wassup01_TEAM__4
+# SMART PIXCELS
 
 ## Non-face-to-face psychological counseling service using AI human
 - Purpose of the project

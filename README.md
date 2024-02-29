@@ -55,8 +55,8 @@
       - Test Data Count: 70000=1000*7
 ## EDA
 - 
-(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
-(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
 ## Models
 - You can check the list at config.py
 1) List of Neural Network models used to train models (total:18)

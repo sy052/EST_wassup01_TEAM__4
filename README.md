@@ -18,6 +18,7 @@
 - [Bong-HoonLee](https://github.com/Bong-HoonLee)
 - [Jae-SeokLee](https://github.com/appleman153)
 - [Sejun Choi](https://github.com/enversel)
+- [SoyeonHwang](https://github.com/sy052)
 
 
 ### Directory
@@ -32,21 +33,46 @@
 - `requirements.txt`: required libraries and packages 
 - `trainer.py`: main train&test logics
 
-### How to Run & Debug
+## How to Run & Debug
 1) `pip install -r requirements.txt` to install required packages
 2) streamlit run main.py
 3) Drag image to sidebar uploading
 4) And Try Psychological counseling
 
 
-### Dataset
+## Dataset
 - Psychological counseling paper in severance hospital
 
+## EDA
+- 
 
-### Models
+## Models
+- You can check the list at config.py
+1) List of Neural Network models used to train models (total:18)
+- alexnet		
+- convnext_tiny	
+- densenet121	
+- efficientnet_v2_s	
+- googlenet	
+- inception_v3		
+- mnasnet0_5		
+- mobilenet_v3_large	
+- resnet18		
+- resnet34		
+- resnet50		
+- resnet101	
+- vgg11_bn		
+- vgg13_bn	
+- vgg16_bn	
+- vit_b_16	
+- swin_t	
+- custom
+
+2) Finally selected neural network models (total:10)
+: Select by considering the appropriate model and performance for the chatbot
 - Yolo v8
 - AlexNet
-- DenseNet
+- DenseNet121
 - EfficientNet
 - VGG
 - ResNet
@@ -56,12 +82,11 @@
 - Custom model
 
 # result
+- we chose the YOLO with the fastest and the highest accuracy<br><br>
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/54875204/b65091f7-1615-420d-b854-66089aed025e)
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/54875204/12033bf3-1274-4e15-895c-319df51621ea)
-
-we chose the YOLO with the fastest and the highest accuracy<br><br>
-prams : 3.2M
-Accuracy: 69%
+- prams : 3.2M
+- Accuracy: 69%
 
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/115579916/568470df-1572-47a3-a5c1-3a2b8ffc77cc)
 

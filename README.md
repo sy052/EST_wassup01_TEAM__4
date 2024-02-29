@@ -54,43 +54,46 @@
       - Train Data Count: 14000=2000*7
       - Test Data Count: 70000=1000*7
 ## EDA
-- 
+1) Classifying pain as a psychological and expression of physical pain.
+	- Psychological pain was similar to a sad expression, so it was judged that it was difficult to discern from sadness. 
+2) Learn 14000 by classifying it into train and validation in an 8:2 ratio, respectively.
+   
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
 ## Models
 - You can check the list at config.py
 1) List of Neural Network models used to train models (total:18)
-- alexnet		
-- convnext_tiny	
-- densenet121	
-- efficientnet_v2_s	
-- googlenet	
-- inception_v3		
-- mnasnet0_5		
-- mobilenet_v3_large	
-- resnet18		
-- resnet34		
-- resnet50		
-- resnet101	
-- vgg11_bn		
-- vgg13_bn	
-- vgg16_bn	
-- vit_b_16	
-- swin_t	
-- custom
+	- alexnet		
+	- convnext_tiny	
+	- densenet121	
+	- efficientnet_v2_s	
+	- googlenet	
+	- inception_v3		
+	- mnasnet0_5		
+	- mobilenet_v3_large	
+	- resnet18		
+	- resnet34		
+	- resnet50		
+	- resnet101	
+	- vgg11_bn		
+	- vgg13_bn	
+	- vgg16_bn	
+	- vit_b_16	
+	- swin_t	
+	- custom
 
 2) Finally selected neural network models (total:10)
 : Select by considering the appropriate model and performance for the chatbot
-- Yolo v8
-- AlexNet
-- DenseNet121
-- EfficientNet
-- VGG
-- ResNet
-- ViT
-- swin_t
-- MobileNet
-- Custom model
+	- Yolo v8
+	- AlexNet
+	- DenseNet121
+	- EfficientNet
+	- VGG
+	- ResNet
+	- ViT
+	- swin_t
+	- MobileNet
+	- Custom model
 
 # result
 - we chose the YOLO with the fastest and the highest accuracy<br><br>

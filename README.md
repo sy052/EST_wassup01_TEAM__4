@@ -21,7 +21,7 @@
 
 
 ### Directory
-- `.streamlit` : Folder used for streamlet
+- `.streamlit` : Folder used for streamlit
 - `archive`: EDA, data pre-processing
 - `config_f`: Auto-training config folder
 - `contents` : source

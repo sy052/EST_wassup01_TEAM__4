@@ -57,7 +57,7 @@
 
 # result
 
-we chose the YOLO with the fastest and the highest accuracy
+we chose the YOLO with the fastest and the highest accuracy<br><br>
 prams : 3.2M
 Accuracy: 69%
 

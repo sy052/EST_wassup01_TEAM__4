@@ -20,6 +20,10 @@
 - [Sejun Choi](https://github.com/enversel)
 - [SoyeonHwang](https://github.com/sy052)
 
+## 개발 환경
+| **IDE**           | **GPU 서버**                    | **프로그래밍 언어** |
+| ----------------- | ------------------------------- | ------------------- |
+| ![VSCode](https://img.shields.io/badge/Cursor-Visual%20Studio%20Code-blue?style=for-the-badge&logo=visual-studio-code) | ![A100 GPU](https://img.shields.io/badge/Microsoft%20Azure-A100%20GPU-0078D4?style=for-the-badge&logo=microsoft-azure)       | ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)              |
 
 
 ### Directory

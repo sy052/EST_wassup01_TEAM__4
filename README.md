@@ -56,6 +56,8 @@
 - Custom model
 
 # result
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/54875204/b65091f7-1615-420d-b854-66089aed025e)
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/54875204/12033bf3-1274-4e15-895c-319df51621ea)
 
 we chose the YOLO with the fastest and the highest accuracy<br><br>
 prams : 3.2M

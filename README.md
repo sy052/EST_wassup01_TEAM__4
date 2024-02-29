@@ -1,4 +1,6 @@
 # SMART PIXCELS
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/115579916/8d2f8a80-8fc2-4012-b17d-7a498b4c23c4)
+
 
 ## Non-face-to-face psychological counseling service using AI human
 - Purpose of the project

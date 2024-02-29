@@ -46,8 +46,8 @@
 
 
 ## Dataset
-- Psychological counseling paper in severance hospital
 [AI Hub::한국인 감정인식을 위한 복합 영상](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=82)
+- Psychological counseling paper in severance hospital
   - Image data
     - Face photo by each emotion (joy, panic, anger, anxiety, hurt, sadness, neutral)
     - Total number of data: 500,000 source data
@@ -55,8 +55,8 @@
       - Test Data Count: 70000=1000*7
 ## EDA
 - 
-(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
-(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
+![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
 ## Models
 - You can check the list at config.py
 1) List of Neural Network models used to train models (total:18)

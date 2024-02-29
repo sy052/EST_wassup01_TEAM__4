@@ -20,7 +20,7 @@
 - [Sejun Choi](https://github.com/enversel)
 - [SoyeonHwang](https://github.com/sy052)
 
-## 개발 환경
+## Dev env
 | **IDE**           | **GPU 서버**                    | **프로그래밍 언어** |
 | ----------------- | ------------------------------- | ------------------- |
 | ![VSCode](https://img.shields.io/badge/Cursor-Visual%20Studio%20Code-blue?style=for-the-badge&logo=visual-studio-code) | ![A100 GPU](https://img.shields.io/badge/Microsoft%20Azure-A100%20GPU-0078D4?style=for-the-badge&logo=microsoft-azure)       | ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)              |
@@ -47,10 +47,16 @@
 
 ## Dataset
 - Psychological counseling paper in severance hospital
-
+[AI Hub::한국인 감정인식을 위한 복합 영상](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=82)
+  - Image data
+    - Face photo by each emotion (joy, panic, anger, anxiety, hurt, sadness, neutral)
+    - Total number of data: 500,000 source data
+      - Train Data Count: 14000=2000*7
+      - Test Data Count: 70000=1000*7
 ## EDA
 - 
-
+(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
+(https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
 ## Models
 - You can check the list at config.py
 1) List of Neural Network models used to train models (total:18)

@@ -61,7 +61,7 @@
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/49bac0d8-42d5-4d08-947e-8f88950f26a4)
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/38178158/8713ac5f-f3db-4e95-930e-bd8b05b9d5ef)
 ## Models
-- You can check the list at config.py
+You can check the list at config.py
 1) List of Neural Network models used to train models (total:18)
 	- alexnet		
 	- convnext_tiny	
@@ -83,7 +83,7 @@
 	- custom
 
 2) Finally selected neural network models (total:10)
-: Select by considering the appropriate model and performance for the chatbot
+- Select by considering the appropriate model and performance for the chatbot
 	- Yolo v8
 	- AlexNet
 	- DenseNet121

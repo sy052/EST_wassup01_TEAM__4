@@ -21,7 +21,7 @@
 - [SoyeonHwang](https://github.com/sy052)
 
 ## Dev env
-| **IDE**           | **GPU 서버**                    | **프로그래밍 언어** |
+| **IDE**           | **GPU**                    | **Programing Language** |
 | ----------------- | ------------------------------- | ------------------- |
 | ![VSCode](https://img.shields.io/badge/Cursor-Visual%20Studio%20Code-blue?style=for-the-badge&logo=visual-studio-code) | ![A100 GPU](https://img.shields.io/badge/Microsoft%20Azure-A100%20GPU-0078D4?style=for-the-badge&logo=microsoft-azure)       | ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)              |
 
@@ -105,6 +105,7 @@ You can check the list at config.py
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/115579916/568470df-1572-47a3-a5c1-3a2b8ffc77cc)
 
 # service
+- Psychological counseling chatbot
 
 ![image](https://github.com/Bong-HoonLee/EST_wassup01_TEAM__4/assets/115579916/1c7b9e27-bb62-4aad-b433-4d2825dd3bd5)
 

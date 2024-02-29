@@ -46,8 +46,8 @@
 
 
 ## Dataset
-- Psychological counseling paper in severance hospital
 [AI Hub::한국인 감정인식을 위한 복합 영상](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=82)
+- Psychological counseling paper in severance hospital
   - Image data
     - Face photo by each emotion (joy, panic, anger, anxiety, hurt, sadness, neutral)
     - Total number of data: 500,000 source data
